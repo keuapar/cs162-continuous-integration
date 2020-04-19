@@ -2,24 +2,48 @@
 #assignment, the tests here are made up
 
 import unittest
+import requests
+import sqlalchemy
+import psycopg2
+from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.orm import sessionmaker, mapper
 
+# adapted from https://gist.github.com/keuapar/8dd05ff6f191c234db4108204daf7bcf
 
 class TestCase(unittest.TestCase):
 
-    def test_connection(self):
-        #response = requests.get('http://localhost:5000')
-        self.assertEqual(200, 200) #test doesn't work but we are checking continuous integration #response.status_code)
+    def test_q1(self):
+        r = requests.post('http://192.168.99.100:5000/add', data={'expression': '8+7+6+5+4+3+2+1'})
+        self.assertEqual(r.status_code, 200) #test doesn't work but we are checking continuous integration #response.status_code)
 
-    def test_post(self):
-        #response = requests.post('http://localhost:5000/add', data={'expression':'1+1'})
-        self.assertEqual(200, 200)#test doesn't work but we are checking continuous integration response.status_code)
+    def test_q2(self):
+        DATABASE_URI = 'postgres+psycopg2://cs162_user:cs162_password@192.168.99.100:5432/cs162'
 
-    def test_err(self):
-        #response = requests.post('http://localhost:5000/add', data={'expressions':'1+1'})
-        self.assertEqual(400, 400)#test doesn't work but we are checking continuous integration response.status_code)
+        class Exps(object):
+            pass
 
-    def test_db(self):
-        self.assertEqual(400, 400)#test doesn't work but we are checking continuous integration response.status_code)
+        from sqlalchemy import create_engine, MetaData, Table
+        engine = create_engine(DATABASE_URI)
+
+        from sqlalchemy.orm import sessionmaker, mapper
+
+        Session = sessionmaker(bind=engine)
+
+        metadata = MetaData(engine)
+        expressions = Table('expression', metadata, autoload=True)
+        mapper(Exps, expressions)
+
+        s = Session()
+        exps = s.query(Exps).all()
+
+        self.assertEqual(exps[0].value, 36.0)#test doesn't work but we are checking continuous integration response.status_code)
+
+    def test_q3(self):
+        r = requests.post('http://192.168.99.100:5000/add', data={'expression': '15!'})
+        self.assertEqual(r.status_code, 500)#test doesn't work but we are checking continuous integration response.status_code)
+
+    def test_q4(self):
+        self.assertEqual(exps[-1], 36.0)#test doesn't work but we are checking continuous integration response.status_code)
 
 if __name__ == '__main__':
     unittest.main()
