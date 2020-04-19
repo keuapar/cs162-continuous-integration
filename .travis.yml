@@ -29,7 +29,7 @@ install:
 
 before_script:
     # It seems to take a few seconds before flask / db accept connections, so let's snooze.
-    - sleep 10
+    - sleep 15
 # command to run tests
 script:
 - python tests/tests.py
