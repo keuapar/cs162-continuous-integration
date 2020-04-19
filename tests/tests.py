@@ -10,6 +10,9 @@ from sqlalchemy.orm import sessionmaker, mapper
 
 class TestCase(unittest.TestCase):
 
+    def test_q0(self):
+        self.assertEqual(True, True)
+
     def test_q1(self):
         r = requests.post('http://127.0.0.1:5000/add', data={'expression': '8+7+6+5+4+3+2+1'})
         self.assertEqual(r.status_code, 200)
@@ -46,3 +49,4 @@ class TestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
